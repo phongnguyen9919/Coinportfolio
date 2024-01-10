@@ -1,20 +1,22 @@
-
 const asyncHandler = require("express-async-handler");
 const transactionModel = require("../model/transaction.model");
 const transactionService = require("../service/transaction.service");
 
-
-
-
+const {
+  getTopCoin,
+  getCoinPrice,
+} = require("../service/externalApiCoin.service");
+const investOptionModel = require("../model/investOption.model");
 
 module.exports = {
   getTransactions: async (req, res) => {
     try {
       const transaction = await transactionService.getTransactions();
+
       res.status(200).json({
         msg: "Get transaction sucessfully",
         isSucess: true,
-        data: transaction, 
+        data: transaction,
       });
     } catch (error) {
       res.status(400).json({
@@ -25,40 +27,72 @@ module.exports = {
       });
     }
   },
-  getTransaction: asyncHandler(async (req,res) =>{
+  getTransaction: asyncHandler(async (req, res) => {
     const transaction = await transactionService.getTransaction(req.params.id);
-    if(!transaction){
+    // console.log(transaction)
+
+    if (!transaction) {
       res.status(404);
-      throw new Error("Transaction not found!")
+      throw new Error("Transaction not found!");
     }
+    // coinp = await getCoinPrice("BTC");
+    // const pnl = transactionService.pnl(
+    //   transaction.quantity,
+    //   coinp.USD,
+    //   transaction.price
+    // );
+    // transaction.pnl = pnl;
     res.status(200).json(transaction);
   }),
-  createTransaction: asyncHandler(async (req, res) =>{
-    const {coin_name,price,amount,date,status} = req.body;
-   
-    if( !coin_name|| !price|| !amount|| !date|| !status){
+  createTransaction: asyncHandler(async (req, res) => {
+    const { quantity, price, type, date, status, investid } = req.body;
+    if (!quantity || !price || !type || !investid) {
       res.status(400);
     }
-    const newtransaction = await transactionService.createTransaction({coin_name,price,amount,date,status})
+    invest = await investOptionModel.findById(investid);
+
+    invest.transactions.push(investid);
+
+    // console.log(invest.transactions)
+    coinprice = await getCoinPrice(invest.symbol);
+
+    // console.log(coinprice)
+    const pnl = transactionService.pnl(quantity, coinprice, price);
+    // console.log(pnl)
+    invest.revenue += pnl;
+    invest.save();
+    const newtransaction = await transactionService.createTransaction({
+      quantity,
+      price,
+      type,
+      date,
+      pnl,
+      status,
+      investid,
+    });
+    // console.log(req.body);
     res.status(201).json(newtransaction);
   }),
-  updateTransaction: asyncHandler(async (req,res) =>{
-    const transaction =  await transactionModel.findById(req.params.id);
-    if(!transaction){
+  updateTransaction: asyncHandler(async (req, res) => {
+    const transaction = await transactionModel.findById(req.params.id);
+    if (!transaction) {
       res.status(404);
       throw new Error("Transaction not Found");
     }
-    console.log(req.body);
-    updateTransaction = await transactionService.updateTransaction(req.params.id,req.body);
-    console.log(updateTransaction);
+    // console.log(req.body);
+    updateTransaction = await transactionService.updateTransaction(
+      req.params.id,
+      req.body
+    );
+    // console.log(updateTransaction);
     res.status(200).json(updateTransaction);
   }),
-  deleteTransaction: asyncHandler(async (req,res) =>{
-    const transaction =  await transactionModel.findById(req.params.id);
-    if(!transaction){
+  deleteTransaction: asyncHandler(async (req, res) => {
+    const transaction = await transactionModel.findById(req.params.id);
+    if (!transaction) {
       res.status(404);
       throw new Error("Transaction not Found");
     }
-    res.status(200).json(transactionService.deleteTransaction(req.params.id))
-  })
+    res.status(200).json(transactionService.deleteTransaction(req.params.id));
+  }),
 };
