@@ -51,7 +51,7 @@ module.exports = {
     }
     invest = await investOptionModel.findById(investid);
     if(!invest){
-      throw new error("Invest not found with id"+ `${investid}`)
+      throw new Error("Invest not found with id:"+ `${investid}`)
     }
     
 

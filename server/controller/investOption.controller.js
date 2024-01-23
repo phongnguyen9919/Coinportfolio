@@ -3,6 +3,7 @@ const investOptionService = require("../service/investOption.service");
 const investOptionModel = require("../model/investOption.model");
 const { getAssetbySymbol } = require("../service/externalApiCoin.service");
 const portfolioModel = require("../model/portfolio.model");
+const { Error } = require("mongoose");
 
 module.exports = {
   getInvests: expressAsyncHandler(async (req, res) => {
@@ -35,7 +36,9 @@ module.exports = {
       res.status(400);
     }
     portfolio = await portfolioModel.findById(portid);
-    
+    if(!portfolio){
+      throw new Error("Portfolio not found with id:"+`${portid}`);
+    }
     
     // const revenue = investOptionService.totoalRevenue()
 
