@@ -21,7 +21,7 @@ module.exports = {
   },
   totoalRevenue: async (invests) => {
     revenue = 0;
-    for (const invest of invest) {
+    for (const invest of invests) {
       revenue += invest;
     }
     return revenue;

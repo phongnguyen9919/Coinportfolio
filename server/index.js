@@ -25,10 +25,12 @@ app.use(cors(corsOptions));
 //route
 const transactionRoute = require("./route/transaction.route");
 const investOptionRoute = require("./route/investOption.route");
+const portfolioRoute = require("./route/portfolio.route")
 const userRoute = require("./route/user.route");
 app.use("/portfolio/transactions", transactionRoute);
 app.use("/portfolio/invests", investOptionRoute);
 app.use("/portfolio/user", userRoute);
+app.use("/portfolio/portfolios",portfolioRoute)
 //start the server
 app.listen(port, () => {
   console.log("listen to port ", port);
