@@ -93,6 +93,9 @@ module.exports = {
       res.status(404);
       throw new Error("Transaction not Found");
     }
+    invest = await investOptionModel.findById(investid);
+    invest.revenue -= transaction.pnl;
+    invest.save();
     res.status(200).json(transactionService.deleteTransaction(req.params.id));
   }),
 };
