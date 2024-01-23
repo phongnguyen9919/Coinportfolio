@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
 const InvestOptionSchema = new mongoose.Schema({
-  userid: {
+  portid: {
     type: String,
     require: true,
+    ref: "Portfolio",
   },
   symbol: {
     type: String,

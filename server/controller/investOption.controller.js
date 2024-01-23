@@ -2,6 +2,7 @@ const expressAsyncHandler = require("express-async-handler");
 const investOptionService = require("../service/investOption.service");
 const investOptionModel = require("../model/investOption.model");
 const { getAssetbySymbol } = require("../service/externalApiCoin.service");
+const portfolioModel = require("../model/portfolio.model");
 
 module.exports = {
   getInvests: expressAsyncHandler(async (req, res) => {
@@ -29,23 +30,32 @@ module.exports = {
     res.status(200).json(invest);
   }),
   createInvest: expressAsyncHandler(async (req, res) => {
-    const { userid, symbol, capital, quantity,revenue } = req.body;
-    if (!userid || !symbol || !capital) {
+    const { portid, symbol, capital, quantity, revenue } = req.body;
+    if (!portid || !symbol || !capital) {
       res.status(400);
     }
+    portfolio = await portfolioModel.findById(portid);
+    
+    
+    // const revenue = investOptionService.totoalRevenue()
+
     asset = await getAssetbySymbol(symbol);
 
     coinType = asset.Data.ASSET_TYPE;
     img = asset.Data.LOGO_URL;
     const newinvest = await investOptionService.createInvest({
-      userid,
+      portid,
       symbol,
       capital,
       quantity,
       coinType,
       img,
-      revenue
+      revenue,
     });
+    // console.log(newinvest)
+    portfolio.investid.push(newinvest._id);
+    portfolio.save();
+
     res.status(200).json(newinvest);
   }),
   updateInvest: expressAsyncHandler(async (req, res) => {

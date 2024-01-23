@@ -50,8 +50,10 @@ module.exports = {
       res.status(400);
     }
     invest = await investOptionModel.findById(investid);
-
-    invest.transactions.push(investid);
+    if(!invest){
+      throw new error("Invest not found with id"+ `${investid}`)
+    }
+    
 
     // console.log(invest.transactions)
     coinprice = await getCoinPrice(invest.symbol);
@@ -59,8 +61,7 @@ module.exports = {
     // console.log(coinprice)
     const pnl = transactionService.pnl(quantity, coinprice, price);
     // console.log(pnl)
-    invest.revenue += pnl;
-    invest.save();
+    
     const newtransaction = await transactionService.createTransaction({
       quantity,
       price,
@@ -70,6 +71,9 @@ module.exports = {
       status,
       investid,
     });
+    invest.transactions.push(newtransaction._id);
+    invest.revenue += pnl;
+    invest.save();
     // console.log(req.body);
     res.status(201).json(newtransaction);
   }),
