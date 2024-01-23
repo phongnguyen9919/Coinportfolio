@@ -25,10 +25,11 @@ module.exports = {
       res.status(404);
       throw new Error("Invest not found!");
     }
+    // revenue = investOptionService.totoalRevenue
     res.status(200).json(invest);
   }),
   createInvest: expressAsyncHandler(async (req, res) => {
-    const { userid, symbol, capital, quantity } = req.body;
+    const { userid, symbol, capital, quantity,revenue } = req.body;
     if (!userid || !symbol || !capital) {
       res.status(400);
     }
@@ -43,6 +44,7 @@ module.exports = {
       quantity,
       coinType,
       img,
+      revenue
     });
     res.status(200).json(newinvest);
   }),
