@@ -74,7 +74,7 @@ module.exports = {
     });
   },
   refreshToken: async (req, res) => {
-    const refreshToken = req.body || {};
+    const {refreshToken} = req.body || {};
     if (!refreshToken) {
       res.status(401).json({ msg: "Not have cretidental", isSuccess: false });
       return;
