@@ -19,11 +19,11 @@ module.exports = {
       _id: new mongoose.Types.ObjectId(id),
     });
   },
-  totoalRevenue: async (portfolios) => {
-    revenue = 0;
-    for (const portfolio of portfolios) {
-      revenue += portfolio;
-    }
-    return revenue;
-  },
+  // totoalRevenue: async (invests = 0) => {
+  //   revenue = 0;
+  //   for (const invest of invests) {
+  //     revenue += invest;
+  //   }
+  //   return revenue;
+  // },
 };

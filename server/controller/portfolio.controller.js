@@ -1,6 +1,7 @@
 const expressAsyncHandler = require("express-async-handler")
 const portfolioModel= require("../model/portfolio.model")
-const portfolioService = require("../service/portfolio.service")
+const portfolioService = require("../service/portfolio.service");
+const investOptionModel = require("../model/investOption.model");
 
 
 
@@ -26,6 +27,14 @@ module.exports = {
           res.status(404);
           throw new Error("Portfolio not found!");
         }
+        //calculate the total revenue
+        Revenue = 0
+        for (const id of portfolio.investid){
+          invest= await investOptionModel.findById(id)
+          Revenue+=invest.revenue
+        }
+        portfolio.totalRevenue = Revenue
+        portfolio.save()
         res.status(200).json(portfolio);
       }),
       createPortfolio: expressAsyncHandler(async (req, res) => {
