@@ -8,8 +8,8 @@ const PortfolioSchema = new mongoose.Schema({
   },
   
   captital: {
-    type: String,
-    require: true,
+    type: Number,
+    default: 0,
   },
   investid: [{
     type: mongoose.Schema.Types.ObjectId,

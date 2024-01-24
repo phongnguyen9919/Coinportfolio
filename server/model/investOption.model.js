@@ -15,7 +15,7 @@ const InvestOptionSchema = new mongoose.Schema({
     default: 0,
   },
   captital: {
-    type: String,
+    type: Number,
     require: true,
   },
   coinType: {

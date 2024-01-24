@@ -34,8 +34,6 @@ module.exports = {
           res.status(400);
         }
         
-    
-       
         const newportfolio = await portfolioService.createPortfolio({
           id,
           userid,
