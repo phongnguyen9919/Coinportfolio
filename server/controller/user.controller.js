@@ -5,8 +5,9 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   signup: async (req, res) => {
     try {
-      const { email, name, password } = req.body.data;
+      const { email, name, password } = req.body;
       const isUserExisted = await findUser(email);
+      console.log(isUserExisted)
       if (isUserExisted) {
         res.status(400).json({
           msg: "email already exisited",
@@ -34,9 +35,10 @@ module.exports = {
     }
   },
   signin: async (req, res) => {
-    const { email, password } = req.body.data;
+    const { email, password } = req.body;
     console.log("sign");
     const user = await findUser(email);
+    // console.log(email)
     if (!user) {
       res.status(400).json({
         isSuccess: false,
@@ -45,6 +47,7 @@ module.exports = {
       return;
     }
     const isMatchedPassword = await bcrypt.compare(password, user.password);
+    // console.log(password)
     if (!isMatchedPassword) {
       res.status(400).json({
         isSuccess: false,
@@ -71,7 +74,7 @@ module.exports = {
     });
   },
   refreshToken: async (req, res) => {
-    const refreshToken = req.body.data || {};
+    const refreshToken = req.body || {};
     if (!refreshToken) {
       res.status(401).json({ msg: "Not have cretidental", isSuccess: false });
       return;
