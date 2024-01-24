@@ -58,7 +58,7 @@ module.exports = {
     coinprice = await getCoinPrice(invest.symbol);
 
     // console.log(coinprice)
-    if (transaction.type === "sell") {
+    if (type === "sell") {
       pnl = transactionService.pnl(quantity, price, coinprice);
     }
     pnl = transactionService.pnl(quantity, coinprice, price);
