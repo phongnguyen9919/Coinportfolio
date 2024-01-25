@@ -25,15 +25,19 @@ const InvestOptionSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  totalProceeds:{
-    type:Number,
-    default: 0
+  totalProceeds: {
+    type: Number,
+    default: 0,
   },
   averageNetCost: {
     type: Number,
     default: 0,
   },
   totalPnl: {
+    type: Number,
+    default: 0,
+  },
+  pnl_percentage: {
     type: Number,
     default: 0,
   },

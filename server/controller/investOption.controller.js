@@ -9,6 +9,7 @@ const portfolioModel = require("../model/portfolio.model");
 const { Error } = require("mongoose");
 const Transaction = require("../model/transaction.model");
 const { calculatePnl } = require("../service/transaction.service");
+const transactionService = require("../service/transaction.service");
 
 module.exports = {
   getInvests: expressAsyncHandler(async (req, res) => {
@@ -32,7 +33,6 @@ module.exports = {
       res.status(404);
       throw new Error("Invest not found!");
     }
-    
 
     invest.populate("transactions").then(async (invest) => {
       //invest holding, capital, proceeds đã được tính khi tạo transaction rồi
@@ -52,7 +52,6 @@ module.exports = {
         transaction.save();
       }
 
-
       //calculate averageNetCost
       if (!invest.totalProceeds) {
         invest.averageNetCost = invest.capital / invest.holding;
@@ -63,6 +62,7 @@ module.exports = {
 
       //calculate total pnl in invest option
       invest.totalPnl = invest.balance - invest.averageNetCost * invest.holding;
+      invest.pnl_percentage = invest.totalPnl / invest.capital;
       invest.save();
       res.status(200).json(invest);
     });
@@ -111,6 +111,12 @@ module.exports = {
       res.status(404);
       throw new Error("Invest not found");
     }
+    for (tran of invest.transactions) {
+      delete tran;
+    }
+    port = await portfolioModel.findById(invest.portid);
+    port.investid.filter((item) => item != invest._id);
+    port.save();
     res.status(200).json(investOptionService.deleteInvest(req.params.id));
   }),
 };

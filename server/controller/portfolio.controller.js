@@ -36,8 +36,8 @@ module.exports = {
         (acc, invest) => acc + invest.totalPnl,
         0
       );
-
-      port.pnl_percentage = port.totalPnl / port.balance;
+      totalCap = port.investid.reduce((acc, invest) => acc + invest.capital, 0);
+      port.pnl_percentage = port.totalPnl / totalCap;
       res.status(200).json(port);
     });
   }),
