@@ -10,21 +10,30 @@ const InvestOptionSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  quantity: {
-    type: Number,
-    default: 0,
-  },
-  captital: {
-    type: Number,
-    require: true,
-  },
-  coinType: {
-    type: String,
-  },
   img: {
     type: String,
   },
-  revenue: {
+  holding: {
+    type: Number,
+    default: 0,
+  },
+  balance: {
+    type: Number,
+    default: 0,
+  },
+  capital: {
+    type: Number,
+    default: 0,
+  },
+  totalProceeds:{
+    type:Number,
+    default: 0
+  },
+  averageNetCost: {
+    type: Number,
+    default: 0,
+  },
+  totalPnl: {
     type: Number,
     default: 0,
   },

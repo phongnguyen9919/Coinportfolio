@@ -35,13 +35,7 @@ module.exports = {
       res.status(404);
       throw new Error("Transaction not found!");
     }
-    // coinp = await getCoinPrice("BTC");
-    // const pnl = transactionService.pnl(
-    //   transaction.quantity,
-    //   coinp.USD,
-    //   transaction.price
-    // );
-    // transaction.pnl = pnl;
+
     res.status(200).json(transaction);
   }),
   createTransaction: asyncHandler(async (req, res) => {
@@ -50,37 +44,46 @@ module.exports = {
       res.status(400);
     }
     invest = await investOptionModel.findById(investid);
+
     if (!invest) {
       throw new Error("Invest not found with id:" + `${investid}`);
     }
 
-    // console.log(invest.transactions)
-    coinprice = await getCoinPrice(invest.symbol);
-
-    // console.log(coinprice)
-    if (type == "sell") {
-      // console.log(type == "sell");
-      pnl = transactionService.pnl(quantity, price, coinprice);
-      
-    }else{
-      pnl = transactionService.pnl(quantity, coinprice, price);
+    //get coin current price
+    // currentPrice = await getCoinPrice(invest.symbol);
+    proceeds = null;
+    pnl = null;
+    //calculate pnl if buy and proceed if sell
+    if (type === "buy") {
+      pnl = 0;
+      invest.holding += quantity;
+      invest.capital += quantity * price;
+    } else {
+      if (quantity > invest.holding) {
+        throw new Error("Selling more than you have");
+      }
+      proceeds = quantity * price;
+      invest.totalProceeds += proceeds;
+      invest.holding -= quantity;
     }
-    
-    // console.log(pnl)
 
     const newtransaction = await transactionService.createTransaction({
       quantity,
       price,
       type,
       date,
-      pnl,
       status,
+      pnl,
+      proceeds,
       investid,
     });
     invest.transactions.push(newtransaction._id);
-    invest.revenue += pnl;
     invest.save();
-    // console.log(req.body);
+    // transactionModel.populate(newtransaction, {path: "investid"}).then(tran=>{
+    //   res.status(201).json(tran)
+    //   console.log(tran)
+    // })
+
     res.status(201).json(newtransaction);
   }),
   updateTransaction: asyncHandler(async (req, res) => {
@@ -103,9 +106,19 @@ module.exports = {
       res.status(404);
       throw new Error("Transaction not Found");
     }
-    invest = await investOptionModel.findById(investid);
-    invest.revenue -= transaction.pnl;
+    invest = await investOptionModel.findById(transaction.investid);
+
+    if (transaction.type === "buy") {
+      invest.holding -= transaction.quantity;
+      invest.capital -= transaction.quantity * transaction.price;
+    } else {
+      
+      invest.totalProceeds -= transaction.proceeds;
+      invest.holding += transaction.quantity;
+    }
+    invest.transactions.filter((item) => item != transaction._id);
     invest.save();
+
     res.status(200).json(transactionService.deleteTransaction(req.params.id));
   }),
 };

@@ -25,15 +25,21 @@ module.exports = {
       res.status(404);
       throw new Error("Portfolio not found!");
     }
-    //calculate the total revenue
-    let Revenue = 0;
-    for (const id of portfolio.investid) {
-      invest = await investOptionModel.findById(id);
-      Revenue += invest.revenue;
-    }
-    portfolio.totalRevenue = Revenue;
-    portfolio.save();
-    res.status(200).json(portfolio);
+    //calculate the total pnl of all invests
+    portfolio.populate("investid").then((port) => {
+      port.balance = port.investid.reduce(
+        (acc, invest) => acc + invest.balance,
+        0
+      );
+
+      port.totalPnl = port.investid.reduce(
+        (acc, invest) => acc + invest.totalPnl,
+        0
+      );
+
+      port.pnl_percentage = port.totalPnl / port.balance;
+      res.status(200).json(port);
+    });
   }),
   createPortfolio: expressAsyncHandler(async (req, res) => {
     const { id, userid, capital } = req.body;

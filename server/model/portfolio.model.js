@@ -7,11 +7,15 @@ const PortfolioSchema = new mongoose.Schema({
     ref: "User",
   },
 
-  captital: {
+  balance: {
     type: Number,
     default: 0,
   },
-  totalRevenue: {
+  totalPnl: {
+    type: Number,
+    default: 0,
+  },
+  pnl_percentage: {
     type: Number,
     default: 0,
   },
