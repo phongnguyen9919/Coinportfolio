@@ -58,10 +58,10 @@ module.exports = {
       pnl = 0;
       invest.holding += quantity;
       invest.capital += quantity * price;
-    } else {
-      if (quantity > invest.holding) {
-        throw new Error("Selling more than you have");
-      }
+    } else { //sell
+      // if (quantity > invest.holding) {
+      //   throw new Error("Selling more than you have");
+      // }
       proceeds = quantity * price;
       invest.totalProceeds += proceeds;
       invest.holding -= quantity;
