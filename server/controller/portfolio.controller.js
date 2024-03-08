@@ -53,15 +53,17 @@ module.exports = {
     });
   }),
   createPortfolio: expressAsyncHandler(async (req, res) => {
-    const { id, userid, capital } = req.body;
-    if (!userid || !id || !capital) {
+    const { id, userid} = req.body;
+    if (!userid || !id ) {
       res.status(400);
     }
 
     const newportfolio = await portfolioService.createPortfolio({
       id,
       userid,
-      capital,
+      balance,
+      pnl_percentage,
+      totalPnl
     });
     res.status(200).json(newportfolio);
   }),
