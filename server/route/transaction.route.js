@@ -6,7 +6,7 @@ const router = require("express").Router();
 // router.get("/", authMiddleware, transactionController.getTransaction);
 // router.get("/",cors(),transactionController.getTransactions);
 router
-  .route("/transactions/")
+  .route("/transactions")
   .get(authMiddleware, transactionController.getTransactions)
   .post(authMiddleware, transactionController.createTransaction);
 router
