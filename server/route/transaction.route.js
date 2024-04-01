@@ -6,11 +6,11 @@ const router = require("express").Router();
 // router.get("/", authMiddleware, transactionController.getTransaction);
 // router.get("/",cors(),transactionController.getTransactions);
 router
-  .route("/")
+  .route("/transactions/")
   .get(authMiddleware, transactionController.getTransactions)
   .post(authMiddleware, transactionController.createTransaction);
 router
-  .route("/:id")
+  .route("/transactions/:id")
   .get(authMiddleware, transactionController.getTransaction)
   .put(authMiddleware, transactionController.updateTransaction)
   .delete(authMiddleware, transactionController.deleteTransaction);

@@ -2,11 +2,11 @@ const router = require("express").Router();
 const investOptionController = require("../controller/investOption.controller");
 const auth = require("../middlewares/auth");
 router
-  .route("/")
+  .route("/invests/")
   .get(auth, investOptionController.getInvests)
   .post(auth, investOptionController.createInvest);
 router
-  .route("/:id")
+  .route("/invests/:id")
   .get(auth, investOptionController.getInvest)
   .put(auth, investOptionController.updateInvest)
   .delete(auth, investOptionController.deleteInvest);
